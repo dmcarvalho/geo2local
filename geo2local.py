@@ -23,14 +23,15 @@
 """
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QAction, QFileDialog
 
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
 from .geo2local_dialog import Geo2LocalDialog
 import os.path
-
+from .converter.ellipsoid import ellipsoids, elipsoidsIndex, Ellipsoid
+from .converter.transformation import TransformationRT
 
 class Geo2Local:
     """QGIS Plugin Implementation."""
@@ -63,13 +64,73 @@ class Geo2Local:
 
         # Create the dialog (after translation) and keep reference
         self.dlg = Geo2LocalDialog()
+        for k,v in elipsoidsIndex.items():
+            self.dlg.elipsoideComboBox.addItem(ellipsoids[v]['description'])
 
+        
+        self.dlg.entradaPushButton.clicked.connect(self.selecionarEntrada)
+
+        self.dlg.saidaPushButton.clicked.connect(self.selecionarSaida)
+
+        self.dlg.button_box.accepted.connect(self.processar)
+
+
+        self.dlg.longLineEdit.setText('-53.8033814')
+        self.dlg.latLineEdit.setText('-29.6851191')
+        self.dlg.altLineEdit.setText('135.788')
+        
         # Declare instance attributes
         self.actions = []
         self.menu = self.tr(u'&Geo2Local')
         # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'Geo2Local')
         self.toolbar.setObjectName(u'Geo2Local')
+
+
+        
+    def processar(self):
+        fileIn = self.dlg.entradaLineEdit.text()
+        fileOut = self.dlg.saidaLineEdit.text()
+
+        long = float(self.dlg.longLineEdit.text())
+        lat = float(self.dlg.latLineEdit.text())
+        alt = float(self.dlg.altLineEdit.text())
+
+        elipsoide = self.dlg.elipsoideComboBox.currentIndex() + 1
+        metodo = self.dlg.metodoComboBox.currentIndex()
+        direcao = self.dlg.direcaoComboBox.currentIndex()
+
+        origin = [lat, long, alt]
+
+        el = Ellipsoid(name=elipsoidsIndex[elipsoide])
+        t = TransformationRT(el, [lat, long, alt])
+
+        entrada = open(fileIn)
+        lines = [i for i in entrada.readlines()]
+        if direcao == 0:
+            coords = [t.local2geo([float(j) for j in i.replace('\n','').split(',')[1:]]) for i in lines]
+        else:
+            coords = [t.geo2local([float(j) for j in i.replace('\n','').split(',')[1:]]) for i in lines]
+
+        indice = [i.replace('\n','').split(',')[0] for i in lines]
+
+        saida = open(fileOut, 'w')
+        for i in range(len(indice)):
+            line = '%s,%s\n' % (indice[i], ','.join([str(i) for i in coords[i]]))
+            saida.writelines(line)
+        entrada.close()
+        saida.close()
+
+
+    def selecionarEntrada(self):
+        file, _ = QFileDialog.getOpenFileName(self.dlg, "Selecione um arquivo", filter='*.csv')
+        self.dlg.entradaLineEdit.setText(file)
+
+
+    def selecionarSaida(self):
+        file, _ = QFileDialog.getSaveFileName(self.dlg, "Selecione um arquivo", filter='*.csv')
+        self.dlg.saidaLineEdit.setText(file)
+
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):

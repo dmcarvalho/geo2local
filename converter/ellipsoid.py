@@ -7,6 +7,52 @@ Created on Wed Feb 14 17:51:53 2018
 
 from math import sin, cos, sqrt, pow, asin, tan, radians, degrees, atan2
 
+elipsoidsIndex = {1: 'airy',
+2: 'mod_airy',
+3: 'clrk66',
+4: 'new_intl',
+5: 'plessis',
+6: 'SEasia',
+7: 'walbeck',
+8: 'sphere',
+9: 'MERIT',
+10: 'SGS85',
+11: 'GRS80',
+12: 'IAU76',
+13: 'APL4.9',
+14: 'NWL9D',
+15: 'andrae',
+16: 'danish',
+17: 'aust_SA',
+18: 'GRS67',
+19: 'GSK2011',
+20: 'bessel',
+21: 'bess_nam',
+22: 'clrk80',
+23: 'clrk80ign',
+24: 'CPM',
+25: 'delmbr',
+26: 'engelis',
+27: 'evrst30',
+28: 'evrst48',
+29: 'evrst56',
+30: 'evrst69',
+31: 'evrstSS',
+32: 'fschr60',
+33: 'fschr60m',
+34: 'fschr68',
+35: 'helmert',
+36: 'hough',
+37: 'intl',
+38: 'krass',
+39: 'kaula',
+40: 'lerch',
+41: 'mprts',
+42: 'PZ90',
+43: 'WGS60',
+44: 'WGS66',
+45: 'WGS72',
+46: 'WGS84'}
 
 ellipsoids = {"airy": { "a": 6377563.396, "b": 6356256.91, "description": "Airy 1830"},
                 "mod_airy": { "a": 6377340.189, "b": 6356034.446, "description": "Modified Airy"},
@@ -62,10 +108,10 @@ class Ellipsoid(object):
                 self._a = float(kwargs.get("a"))
                 self._b = float(kwargs.get("b"))
             
-        if kwargs.has_key("name"):
-            self._name = kwargs.get("name")
-            if ellipsoids.has_key(self._name):
-                el = ellipsoids[self._name]
+        if "name" in kwargs.keys():
+            self._name = kwargs["name"]
+            if self.name in ellipsoids.keys():
+                el = ellipsoids[self.name]
                 self._a = el["a"]
                 self._b = el["b"]
             else:
