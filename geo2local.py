@@ -106,7 +106,7 @@ class Geo2Local:
         t = TransformationRT(el, [lat, long, alt])
 
         entrada = open(fileIn)
-        lines = [i for i in entrada.readlines()]
+        lines = [i for i in entrada.readlines() if 'nome' not in i]
         if direcao == 0:
             coords = [t.local2geo([float(j) for j in i.replace('\n','').split(',')[1:]]) for i in lines]
         else:
@@ -115,6 +115,7 @@ class Geo2Local:
         indice = [i.replace('\n','').split(',')[0] for i in lines]
 
         saida = open(fileOut, 'w')
+        saida.writelines('nome,lat,long,alt\n')
         for i in range(len(indice)):
             line = '%s,%s\n' % (indice[i], ','.join([str(i) for i in coords[i]]))
             saida.writelines(line)
