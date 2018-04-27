@@ -23,7 +23,7 @@
 """
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction, QFileDialog
+from PyQt5.QtWidgets import QAction, QFileDialog, QMessageBox
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -31,7 +31,7 @@ from .resources import *
 from .geo2local_dialog import Geo2LocalDialog
 import os.path
 from .converter.ellipsoid import ellipsoids, elipsoidsIndex, Ellipsoid
-from .converter.transformation import TransformationRT
+from .converter.transformation import TransformationRT, TransformationNBR14166
 
 class Geo2Local:
     """QGIS Plugin Implementation."""
@@ -78,6 +78,9 @@ class Geo2Local:
         self.dlg.longLineEdit.setText('-53.8033814')
         self.dlg.latLineEdit.setText('-29.6851191')
         self.dlg.altLineEdit.setText('135.788')
+
+        self.dlg.xLineEdit.setText('150000')
+        self.dlg.yLineEdit.setText('250000')
         
         # Declare instance attributes
         self.actions = []
@@ -96,31 +99,45 @@ class Geo2Local:
         lat = float(self.dlg.latLineEdit.text())
         alt = float(self.dlg.altLineEdit.text())
 
+        dX = float(self.dlg.xLineEdit.text())
+        dY = float(self.dlg.yLineEdit.text())      
+        
+        
+
         elipsoide = self.dlg.elipsoideComboBox.currentIndex() + 1
         metodo = self.dlg.metodoComboBox.currentIndex()
         direcao = self.dlg.direcaoComboBox.currentIndex()
 
         origin = [lat, long, alt]
 
-        el = Ellipsoid(name=elipsoidsIndex[elipsoide])
-        t = TransformationRT(el, [lat, long, alt])
-
-        entrada = open(fileIn)
-        lines = [i for i in entrada.readlines() if 'nome' not in i]
-        if direcao == 0:
-            coords = [t.local2geo([float(j) for j in i.replace('\n','').split(',')[1:]]) for i in lines]
+        if metodo == 0 and direcao == 0:
+            QMessageBox.warning(self.dlg, "Aviso","Ainda não Implementado!!!")
+            
         else:
-            coords = [t.geo2local([float(j) for j in i.replace('\n','').split(',')[1:]]) for i in lines]
+            el = Ellipsoid(name=elipsoidsIndex[elipsoide])
+            if metodo == 0:
+                t = TransformationNBR14166(el, origin)
+            else:
+                t = TransformationRT(el, origin)
 
-        indice = [i.replace('\n','').split(',')[0] for i in lines]
 
-        saida = open(fileOut, 'w')
-        saida.writelines('nome,lat,long,alt\n')
-        for i in range(len(indice)):
-            line = '%s,%s\n' % (indice[i], ','.join([str(i) for i in coords[i]]))
-            saida.writelines(line)
-        entrada.close()
-        saida.close()
+            entrada = open(fileIn)
+            lines = [i for i in entrada.readlines() if 'nome' not in i]
+            if direcao == 0:
+                coords = [t.local2geo([float(j) for j in i.replace('\n','').split(',')[1:]]) for i in lines]
+            else:
+                coords = [t.geo2local([float(j) for j in i.replace('\n','').split(',')[1:]]) for i in lines]
+                coords = [[i[0]+dY, i[1]+dX, i[2]] for i in coords]
+
+            indice = [i.replace('\n','').split(',')[0] for i in lines]
+
+            saida = open(fileOut, 'w')
+            saida.writelines('nome,lat,long,alt\n')
+            for i in range(len(indice)):
+                line = '%s,%s\n' % (indice[i], ','.join([str(i) for i in coords[i]]))
+                saida.writelines(line)
+            entrada.close()
+            saida.close()
 
 
     def selecionarEntrada(self):

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>794</width>
-    <height>451</height>
+    <width>570</width>
+    <height>495</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -88,6 +88,38 @@
           </layout>
          </item>
          <item row="1" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_9">
+             <item>
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>Delta X</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="xLineEdit"/>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <item>
+              <widget class="QLabel" name="label_8">
+               <property name="text">
+                <string>Delta Y</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="yLineEdit"/>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item row="2" column="0">
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
             <widget class="QLabel" name="label_6">
@@ -105,56 +137,52 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <layout class="QVBoxLayout" name="verticalLayout_7">
+       <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_5">
-          <item>
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Método</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="metodoComboBox">
-            <item>
-             <property name="text">
-              <string>NBR 14166:1998</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Translações e Rotações</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Método</string>
+          </property>
+         </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_6">
+         <widget class="QComboBox" name="metodoComboBox">
           <item>
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>Direção</string>
-            </property>
-           </widget>
+           <property name="text">
+            <string>NBR 14166:1998</string>
+           </property>
           </item>
           <item>
-           <widget class="QComboBox" name="direcaoComboBox">
-            <item>
-             <property name="text">
-              <string>Plano topográfico Local para Geodésica</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Geodésica para Plano topográfico Local</string>
-             </property>
-            </item>
-           </widget>
+           <property name="text">
+            <string>Translações e Rotações</string>
+           </property>
           </item>
-         </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Direção</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="direcaoComboBox">
+          <item>
+           <property name="text">
+            <string>Plano topográfico Local para Geodésica</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Geodésica para Plano topográfico Local</string>
+           </property>
+          </item>
+         </widget>
         </item>
        </layout>
       </item>
