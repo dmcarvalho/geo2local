@@ -110,34 +110,31 @@ class Geo2Local:
 
         origin = [lat, long, alt]
 
-        if metodo == 0 and direcao == 0:
-            QMessageBox.warning(self.dlg, "Aviso","Ainda não Implementado!!!")
-            
+        el = Ellipsoid(name=elipsoidsIndex[elipsoide])
+        if metodo == 0:
+            t = TransformationNBR14166(el, origin)
         else:
-            el = Ellipsoid(name=elipsoidsIndex[elipsoide])
-            if metodo == 0:
-                t = TransformationNBR14166(el, origin)
-            else:
-                t = TransformationRT(el, origin)
+            t = TransformationRT(el, origin)
 
 
-            entrada = open(fileIn)
-            lines = [i for i in entrada.readlines() if 'nome' not in i]
-            if direcao == 0:
-                coords = [t.local2geo([float(j) for j in i.replace('\n','').split(',')[1:]]) for i in lines]
-            else:
-                coords = [t.geo2local([float(j) for j in i.replace('\n','').split(',')[1:]]) for i in lines]
-                coords = [[i[0]+dY, i[1]+dX, i[2]] for i in coords]
+        entrada = open(fileIn)
+        lines = [i for i in entrada.readlines() if 'nome' not in i]
+        if direcao == 0:
+            print('entrou')
+            coords = [t.local2geo([float(j) for j in i.replace('\n','').split(',')[1:]]) for i in lines]
+        else:
+            coords = [t.geo2local([float(j) for j in i.replace('\n','').split(',')[1:]]) for i in lines]
+            coords = [[i[0]+dY, i[1]+dX, i[2]] for i in coords]
 
-            indice = [i.replace('\n','').split(',')[0] for i in lines]
+        indice = [i.replace('\n','').split(',')[0] for i in lines]
 
-            saida = open(fileOut, 'w')
-            saida.writelines('nome,lat,long,alt\n')
-            for i in range(len(indice)):
-                line = '%s,%s\n' % (indice[i], ','.join([str(i) for i in coords[i]]))
-                saida.writelines(line)
-            entrada.close()
-            saida.close()
+        saida = open(fileOut, 'w')
+        saida.writelines('nome,lat,long,alt\n')
+        for i in range(len(indice)):
+            line = '%s,%s\n' % (indice[i], ','.join([str(i) for i in coords[i]]))
+            saida.writelines(line)
+        entrada.close()
+        saida.close()
 
 
     def selecionarEntrada(self):
