@@ -11,7 +11,7 @@ name=Geo2Local
 qgisMinimumVersion=3.0
 description=This plugin converts coordinates
 version=0.1
-author=Diego Moreira Carvalho/Curupira Tecnologia
+author=Diego Moreira Carvalho - Curupira Tecnologia
 email=diego@curupiratecnologia.com.br
 
 about=This plugin can be used to convert geodetic coordinates into plane coordinates and plane coordinates into geodetic coordinates
